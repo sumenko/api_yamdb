@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.core.mail.message import BadHeaderError
+from django.shortcuts import get_object_or_404
 from rest_framework import authentication, exceptions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 # FIXME
@@ -27,7 +29,12 @@ def get_confirmation_code(request):
     user_mail = request.POST.get('email')
     confirmation_code = User.objects.make_random_password()
     # FIXME add email validation
+    
+    # if User.objects.get(email=user_mail).exists():
+    #     return Response({'error': 'User exists'}, status=status.HTTP_400_BAD_REQUEST)
+    # FIXME повторный вызов должен обновить код, но не трогать токен.
     user = User.objects.create(email=user_mail, password=confirmation_code)
+    
     try:
         err = send_mail(
                     'Getting access', 
@@ -42,8 +49,25 @@ def get_confirmation_code(request):
 
 @api_view(['POST',]) 
 def get_token(request):
+    """ Получение токена по связке email+confirmation_code """
+    email = request.POST.get('email')
+    if not email:
+        return Response({'error': 'email required'},
+                        status=status.HTTP_400_BAD_REQUEST)  
+    
+    confirmation_code = request.POST.get('confirmation_code')
+    if not confirmation_code:
+        return Response({'error': 'confirmation_code required'},
+                         status=status.HTTP_400_BAD_REQUEST)  
+    
+    user = get_object_or_404(User, email=email)
 
-    pass  
+    if confirmation_code == user.password:
+        token = RefreshToken.for_user(user)
+        # token = {'Token': '321'}
+        return Response(token, status=status.HTTP_200_OK)
+    return Response({'error', 'Wrong confirmation code'},
+                    status=status.HTTP_400_BAD_REQUEST)  
 
 
 
