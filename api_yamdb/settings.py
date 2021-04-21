@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +123,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
+# https://docs.djangoproject.com/en/3.1/ref/settings/#std:setting-DEFAULT_FROM_EMAIL
+
+DEFAULT_FROM_EMAIL = 'admin@yamdb.com'
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'send_mails')
+
+AUTH_USER_MODEL = 'users.CustomUser'
