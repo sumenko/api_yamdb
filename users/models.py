@@ -8,9 +8,9 @@ from .managers import CustomUserManager
 # https://testdriven.io/blog/django-custom-user-model/
 
 class CustomUser(AbstractUser):
-    username = None
+    # username = None
     email = models.EmailField(_('email address'), unique=True)
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
