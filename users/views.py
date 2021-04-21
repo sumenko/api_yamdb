@@ -12,7 +12,7 @@ User = get_user_model()
 
 # Create your views here.
 
-# TODO Пользователь отправляет POST-запрос с параметром email на /api/v1/auth/email/.
+# Пользователь отправляет POST-запрос с параметром email на /api/v1/auth/email/.
 # YaMDB отправляет письмо с кодом подтверждения (confirmation_code) на адрес email .
 # Пользователь отправляет POST-запрос с параметрами email и confirmation_code на /api/v1/auth/token/, в ответе на запрос ему приходит token (JWT-токен).
 
@@ -33,7 +33,10 @@ def get_confirmation_code(request):
     # if User.objects.get(email=user_mail).exists():
     #     return Response({'error': 'User exists'}, status=status.HTTP_400_BAD_REQUEST)
     # FIXME повторный вызов должен обновить код, но не трогать токен.
-    user = User.objects.create(email=user_mail, password=confirmation_code)
+    
+    # user = User.objects.create(email=user_mail, password=confirmation_code)
+    user = User.objects.update_or_create(email=user_mail,
+                                         defaults={'password': confirmation_code})
     
     try:
         err = send_mail(
@@ -42,7 +45,7 @@ def get_confirmation_code(request):
                      f'confirmation code: {confirmation_code}'),
                     None, [user_mail, ],
             )
-        return Response(status=status.HTTP_200_OK)
+        return Response({'cc': confirmation_code}, status=status.HTTP_200_OK)
     except BadHeaderError:
         return Response({'errors': 'incorrect e-mail {}'.format(user_mail)},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -62,9 +65,20 @@ def get_token(request):
     
     user = get_object_or_404(User, email=email)
 
+    # код подтверждения истёк
+    if user.password == '':
+        return Response({'error': 'confirmation code expired'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
     if confirmation_code == user.password:
-        token = RefreshToken.for_user(user)
-        # token = {'Token': '321'}
+        refresh = RefreshToken.for_user(user)
+        token = {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
+        # код подтверждения используем один раз
+        user.password = ''
+        user.save()
         return Response(token, status=status.HTTP_200_OK)
     return Response({'error', 'Wrong confirmation code'},
                     status=status.HTTP_400_BAD_REQUEST)  
