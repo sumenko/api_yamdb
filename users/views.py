@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import BaseUserManager
 from django.core.mail import send_mail
 from django.core.mail.message import BadHeaderError
 from django.shortcuts import get_object_or_404
@@ -26,15 +27,17 @@ User = get_user_model()
 @api_view(['POST',])
 def get_confirmation_code(request):
     """ POST Отправляет код подтверждения на почту в параметре email """
-    user_mail = request.POST.get('email')
+    user_mail = BaseUserManager.normalize_email(request.POST.get('email'))
     confirmation_code = User.objects.make_random_password()
     # FIXME add email validation
     
     # if User.objects.get(email=user_mail).exists():
     #     return Response({'error': 'User exists'}, status=status.HTTP_400_BAD_REQUEST)
     # FIXME повторный вызов должен обновить код, но не трогать токен.
-    user = User.objects.create(username=user_mail, password=confirmation_code)
-    
+
+    user = User.objects.create(username=user_mail, password=confirmation_code,
+                               email=user_mail)
+
     try:
         err = send_mail(
                     'Getting access', 
@@ -63,9 +66,13 @@ def get_token(request):
     user = get_object_or_404(User, username=email)
 
     if confirmation_code == user.password:
-        token = RefreshToken.for_user(user)
-        # token = {'Token': '321'}
-        return Response(token, status=status.HTTP_200_OK)
+        refresh = RefreshToken.for_user(user)
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
+    
+        return Response(data, status=status.HTTP_200_OK)
     return Response({'error', 'Wrong confirmation code'},
                     status=status.HTTP_400_BAD_REQUEST)  
 
