@@ -31,12 +31,8 @@ def get_confirmation_code(request):
     confirmation_code = User.objects.make_random_password()
     # FIXME add email validation
     
-    # if User.objects.get(email=user_mail).exists():
-    #     return Response({'error': 'User exists'}, status=status.HTTP_400_BAD_REQUEST)
-    # FIXME повторный вызов должен обновить код, но не трогать токен.
-
-    user = User.objects.create(username=user_mail, password=confirmation_code,
-                               email=user_mail)
+    user = User.objects.update_or_create(username=user_mail, 
+                                         defaults={'password': confirmation_code})
 
     try:
         err = send_mail(
@@ -64,9 +60,15 @@ def get_token(request):
                          status=status.HTTP_400_BAD_REQUEST)  
     
     user = get_object_or_404(User, username=email)
+    # код истек или уже использован
+    if user.password == '':
+        return Response({'error': 'confirmation_code expired'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
     if confirmation_code == user.password:
         refresh = RefreshToken.for_user(user)
+        user.password = ''
+        user.save()
         data = {
             'refresh': str(refresh),
             'access': str(refresh.access_token)
