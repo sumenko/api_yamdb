@@ -1,7 +1,11 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from .views import smoke
+from .views import UsersViewset
+
+router = DefaultRouter()
+router.register('', UsersViewset)
 
 urlpatterns = [
-    path('', smoke),
+    path('', include(router.urls)),
 ]
