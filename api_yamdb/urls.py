@@ -19,10 +19,10 @@ from django.views.generic import TemplateView
 from users.views import get_confirmation_code, get_token
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('api/v1/auth/email/', get_confirmation_code),
     path('api/v1/auth/token/', get_token),
     # path('api/v1/users/', include('users.urls.UsersClass', namespace='auth')),
-    path('admin/', admin.site.urls),
     path(
         'redoc/',
         TemplateView.as_view(template_name='redoc.html'),

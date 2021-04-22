@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import BaseUserManager
 from django.core.mail import send_mail
 from django.core.mail.message import BadHeaderError
 from django.shortcuts import get_object_or_404
@@ -26,18 +27,13 @@ User = get_user_model()
 @api_view(['POST',])
 def get_confirmation_code(request):
     """ POST Отправляет код подтверждения на почту в параметре email """
-    user_mail = request.POST.get('email')
+    user_mail = BaseUserManager.normalize_email(request.POST.get('email'))
     confirmation_code = User.objects.make_random_password()
     # FIXME add email validation
     
-    # if User.objects.get(email=user_mail).exists():
-    #     return Response({'error': 'User exists'}, status=status.HTTP_400_BAD_REQUEST)
-    # FIXME повторный вызов должен обновить код, но не трогать токен.
-    
-    # user = User.objects.create(email=user_mail, password=confirmation_code)
-    user = User.objects.update_or_create(email=user_mail,
-                                         defaults={'password': confirmation_code})
-    
+    user = get_object_or_404(User, email=user_mail)
+    user.confirmation_code = confirmation_code
+    user.save()
     try:
         err = send_mail(
                     'Getting access', 
@@ -45,7 +41,7 @@ def get_confirmation_code(request):
                      f'confirmation code: {confirmation_code}'),
                     None, [user_mail, ],
             )
-        return Response({'cc': confirmation_code}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
     except BadHeaderError:
         return Response({'errors': 'incorrect e-mail {}'.format(user_mail)},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -64,22 +60,22 @@ def get_token(request):
                          status=status.HTTP_400_BAD_REQUEST)  
     
     user = get_object_or_404(User, email=email)
-
-    # код подтверждения истёк
-    if user.password == '':
-        return Response({'error': 'confirmation code expired'},
+    
+    # код истек или уже использован
+    if user.confirmation_code == '':
+        return Response({'error': 'confirmation_code expired'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    if confirmation_code == user.password:
+    if confirmation_code == user.confirmation_code:
         refresh = RefreshToken.for_user(user)
-        token = {
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token),
-                }
-        # код подтверждения используем один раз
-        user.password = ''
+        user.confirmation_code = ''
         user.save()
-        return Response(token, status=status.HTTP_200_OK)
+        data = {
+            # 'refresh': str(refresh),
+            'token': str(refresh.access_token)
+        }
+    
+        return Response(data, status=status.HTTP_200_OK)
     return Response({'error', 'Wrong confirmation code'},
                     status=status.HTTP_400_BAD_REQUEST)  
 
