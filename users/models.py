@@ -9,7 +9,8 @@ class User(AbstractUser):
         ('user', 'user'),
         ('moderator', 'moderator'),
     ]
-    # email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, blank=False)
+    description = models.TextField(blank=True)
     role = models.CharField(max_length=20, choices=ROLES,
                             default='user')
     confirmation_code = models.TextField(null=True, default='')
