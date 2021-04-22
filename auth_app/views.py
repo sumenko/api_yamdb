@@ -3,7 +3,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.core.mail import send_mail
 from django.core.mail.message import BadHeaderError
 from django.shortcuts import get_object_or_404
-from rest_framework import authentication, exceptions, status
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
