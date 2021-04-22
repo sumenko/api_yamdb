@@ -9,27 +9,12 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
-# FIXME
-
-# Create your views here.
-
-# Пользователь отправляет POST-запрос с параметром email на /api/v1/auth/email/.
-# YaMDB отправляет письмо с кодом подтверждения (confirmation_code) на адрес email .
-# Пользователь отправляет POST-запрос с параметрами email и confirmation_code на /api/v1/auth/token/, в ответе на запрос ему приходит token (JWT-токен).
-
-# Эти операции выполняются один раз, при регистрации пользователя. В результате пользователь получает токен и может работать с API, отправляя этот токен с каждым запросом.
-# После регистрации и получения токена пользователь может отправить PATCH-запрос на /api/v1/users/me/ и заполнить поля в своём профайле (описание полей — в документации).
-# Если пользователя создаёт администратор (например, через POST-запрос api/v1/users/...) — письмо с кодом отправлять не нужно.
-# Автоматические тесты платформы не будут проверять отправку писем.
-
-# TODO метооды GET, POST, PATCH
 
 @api_view(['POST',])
 def get_confirmation_code(request):
     """ POST Отправляет код подтверждения на почту в параметре email """
     user_mail = BaseUserManager.normalize_email(request.POST.get('email'))
     confirmation_code = User.objects.make_random_password()
-    # FIXME add email validation
     
     user = get_object_or_404(User, email=user_mail)
     user.confirmation_code = confirmation_code
