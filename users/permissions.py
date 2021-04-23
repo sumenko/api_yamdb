@@ -7,4 +7,4 @@ class IsAdministrator(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.user == 'admin'
+        return request.user == 'admin' # FIXME
