@@ -15,6 +15,7 @@ from .serializers import (CategorySerializer,
 
 
 class CategoryViewSet(DestroyListCreateViewSet):
+    '''апивью для категорий'''
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
