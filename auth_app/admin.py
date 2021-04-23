@@ -8,7 +8,7 @@ from .resources import UserResource
 
 class UserAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('username', 'email', 'role', 'confirmation_code',
-                    'first_name', 'last_name', 'description')
+                    'first_name', 'last_name', 'bio', 'is_staff')
     resource_class = UserResource
 
 admin.site.register(User, UserAdmin)
