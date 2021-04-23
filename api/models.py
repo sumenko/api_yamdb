@@ -5,6 +5,7 @@ from api.validators import score_validator, year_validator
 
 
 class Roles(models.TextChoices):
+    '''model for roles'''
     USER = 'user', 'Пользователь'
     MODERATOR = 'moderator', 'Модератор'
     ADMIN = 'admin', 'Администратор'
