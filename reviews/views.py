@@ -2,7 +2,7 @@ from api.models import Title
 from django.db.models import fields
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Review
@@ -12,9 +12,9 @@ from .serializers import ReviewSerializer
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
+    permission_classes = [IsAuthenticatedOrReadOnly | IsAdminUser]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('id', ) # чтобы искать по ID ревью
+    filterset_fields = ('id', )  # чтобы искать по ID ревью
 
     def get_queryset(self):
         title_id = self.request.parser_context['kwargs'].get('title_id')
