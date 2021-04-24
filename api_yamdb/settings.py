@@ -138,7 +138,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100
 }
 
-# FIXME
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1000),
-}
+if DEBUG:
+    SIMPLE_JWT = {
+        'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1000),
+    }

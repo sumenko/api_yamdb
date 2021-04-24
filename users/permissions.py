@@ -1,22 +1,13 @@
+from django.contrib.auth import get_user_model
 from rest_framework import permissions
+
+User = get_user_model()
 
 
 class IsYAMDBAdministrator(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, obj):    
-    #     # if request.method in permissions.SAFE_METHODS:
-    #     #     return True
-    #     return False
-        print(request.user)
-        print(request.user.role)
-
-        return request.user.role == 'admin'  # FIXME
-
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-        print(request.user)
-        print(request.user.role)
-        return request.user.role == 'admin'  # FIXME
-        
-        # return super().has_permission(request, view)
+        if not request.user.is_authenticated:
+            return False
+        print('has_permission:', request.user, request.user.role)
+        return request.user.role in ('admin', 'user')
