@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from .permissions import IsYAMDBAdministrator
@@ -11,13 +11,10 @@ User = get_user_model()
 
 
 class UsersViewset(ModelViewSet):
-    # admin - может все
-    # moderator - ?
-    # user - обновить свои данные, получить данные
-    # anonymous - не может ничего
+    # admin, djangoadmin - могут все
     queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
-    permission_classes = (IsYAMDBAdministrator,)
+    permission_classes = [IsAdminUser | IsYAMDBAdministrator]
 
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
