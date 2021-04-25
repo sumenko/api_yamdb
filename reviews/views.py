@@ -13,8 +13,8 @@ class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticatedOrReadOnly | IsAdminUser]
-    filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('id', )  # чтобы искать по ID ревью
+    # filter_backends = (DjangoFilterBackend,)
+    # filterset_fields = ('id', )  # чтобы искать по ID ревью
 
     def get_queryset(self):
         title_id = self.request.parser_context['kwargs'].get('title_id')

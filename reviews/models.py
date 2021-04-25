@@ -27,6 +27,9 @@ class Review(models.Model):
                                             MaxValueValidator(10)])
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
+    def __str__(self):
+        return self.text
+
 
     class Meta:
         verbose_name = 'Отзыв'
@@ -37,5 +40,3 @@ class Review(models.Model):
             models.UniqueConstraint(fields=['author', 'title_id'],
                                     name='author-title-constraint')
         ]
-    def __str__(self):
-        return self.text

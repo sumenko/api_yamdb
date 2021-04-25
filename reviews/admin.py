@@ -6,7 +6,7 @@ from .models import Review
 
 
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('author', 'text', 'score', 'pub_date')
+    list_display = ('id', 'author', 'text', 'score', 'pub_date')
     resource_class = Review
 
 
