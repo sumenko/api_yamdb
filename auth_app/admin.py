@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class UserAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('username', 'email', 'role', 'confirmation_code',
+    list_display = ('id', 'username', 'email', 'role', 'confirmation_code',
                     'first_name', 'last_name', 'bio', 'is_staff')
     resource_class = UserResource
 

@@ -10,8 +10,10 @@ from .filters import TitleFilter
 from .mixins import DestroyListCreateViewSet
 from .models import Category, Genre, Title
 from .permissions import IsAdminOrReadOnly
-from .serializers import (CategorySerializer, GenreSerializer,
-                          TitleListSerializer, TitlePostSerializer)
+from .serializers import (
+    CategorySerializer, GenreSerializer, TitleListSerializer,
+    TitlePostSerializer,
+)
 
 
 class CategoryViewSet(DestroyListCreateViewSet):
