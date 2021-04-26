@@ -1,15 +1,15 @@
-from rest_framework.pagination import PageNumberPagination
-from .mixins import DestroyListCreateViewSet
-from .models import Category, Genre, Title
+from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 
 from .filters import TitleFilter
-from .permissions import (IsAdminOrReadOnly)
-from .serializers import (CategorySerializer,
-                          GenreSerializer,
-                          TitleListSerializer,
-                          TitlePostSerializer)
+from .mixins import DestroyListCreateViewSet
+from .models import Category, Genre, Title
+from .permissions import IsAdminOrReadOnly
+from .serializers import (CategorySerializer, GenreSerializer,
+                          TitleListSerializer, TitlePostSerializer)
 
 
 class CategoryViewSet(DestroyListCreateViewSet):
