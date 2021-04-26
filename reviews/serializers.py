@@ -4,32 +4,47 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import Review
+from .models import Comment, Review
 
 User = get_user_model()
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    # author = serializers.SlugRelatedField(slug_field='username',
-    #                                       queryset=User.objects.all(),
-    #                                       default=(
-    #                                         serializers.CurrentUserDefault())
-    #                                       )
-    author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
-    # title_id = serializers.IntegerField(read_only=True)
-    # FIXME
-    # title_id = serializers.SlugRelatedField(slug_field='Title.id',
-    #                                         #queryset=Title.objects.all(),
-    #                                         read_only=True)
+    author = serializers.SlugRelatedField(slug_field='username',
+                                          queryset=User.objects.all(),
+                                          default=(
+                                            serializers.CurrentUserDefault())
+                                         )
+    title_id = serializers.PrimaryKeyRelatedField(read_only=True,
+                                                  default=1)
 
     class Meta:
-        fields = ['id', 'author', 'text', 'score', 'pub_date']
-
         model = Review
+        fields = ['id', 'title_id', 'author', 'text', 'score', 'pub_date']
+
         # FIXME
-        # validators = [
-        #     UniqueTogetherValidator(
-        #         queryset=Review.objects.all(),
-        #         fields=['author', 'title_id'],
-        #         message='Вы уже оставили отзыв.')
-        # ]
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=['author', 'title_id'],
+                message='Вы уже оставили отзыв.')
+        ]
+
+    def to_representation(self, obj):
+        values = super(ReviewSerializer, self).to_representation(obj)
+        values.pop('title_id')
+        return values
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(slug_field='username',
+                                          queryset=User.objects.all(),
+                                          default=(
+                                            serializers.CurrentUserDefault())
+                                         )
+    
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'title_id', 'review_id', 'text', 'author', 'pub_date']
+        pass

@@ -30,7 +30,6 @@ class Review(models.Model):
     def __str__(self):
         return self.text
 
-
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
@@ -40,3 +39,33 @@ class Review(models.Model):
             models.UniqueConstraint(fields=['author', 'title_id'],
                                     name='author-title-constraint')
         ]
+
+
+class Comment(models.Model):
+    title_id = models.ForeignKey(
+        Title,
+        verbose_name='Объект',
+        on_delete=models.CASCADE,
+        related_name='comments',
+        blank=False,
+        null=True,
+        db_index=False,
+    )
+    
+    review_id = models.ForeignKey(
+        Review,
+        verbose_name='Отзыв',
+        on_delete=models.CASCADE,
+        related_name='comments',
+        blank=False,
+        null=True,
+        db_index=False,
+    )
+    text = models.TextField(verbose_name='Текст комментария', blank=False)
+    author = models.ForeignKey(User,
+                               verbose_name='Автор комментария',
+                               on_delete=models.CASCADE,
+                               related_name='comments',
+                               )
+    pub_date = models.DateTimeField('Дата комментария', auto_now_add=True)
+    
