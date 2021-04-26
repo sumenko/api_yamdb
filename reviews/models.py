@@ -1,13 +1,14 @@
-from api.models import Title
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from api.models import Title
 
 User = get_user_model()
 
 
 class Review(models.Model):
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title,
         verbose_name='Объект',
         on_delete=models.CASCADE,
@@ -36,22 +37,12 @@ class Review(models.Model):
 
         ordering = ['-pub_date']
         constraints = [
-            models.UniqueConstraint(fields=['author', 'title_id'],
+            models.UniqueConstraint(fields=['author', 'title'],
                                     name='author-title-constraint')
         ]
 
 
 class Comment(models.Model):
-    title_id = models.ForeignKey(
-        Title,
-        verbose_name='Объект',
-        on_delete=models.CASCADE,
-        related_name='comments',
-        blank=False,
-        null=True,
-        db_index=False,
-    )
-    
     review_id = models.ForeignKey(
         Review,
         verbose_name='Отзыв',
@@ -68,4 +59,3 @@ class Comment(models.Model):
                                related_name='comments',
                                )
     pub_date = models.DateTimeField('Дата комментария', auto_now_add=True)
-    
