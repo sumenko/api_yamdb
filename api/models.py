@@ -1,13 +1,14 @@
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
-from api.validators import score_validator, year_validator
+from api.validators import year_validator
 
 
 class Roles(models.TextChoices):
     USER = 'user', 'Пользователь'
     MODERATOR = 'moderator', 'Модератор'
     ADMIN = 'admin', 'Администратор'
+
 
 class Category(models.Model):
     name = models.CharField('Название', max_length=200)
@@ -18,6 +19,9 @@ class Category(models.Model):
         verbose_name_plural = 'Категории'
         ordering = ('slug',)
 
+    def __str__(self):
+        return self.name
+
 
 class Genre(models.Model):
     name = models.CharField('Название', max_length=200)
@@ -27,6 +31,9 @@ class Genre(models.Model):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
         ordering = ('slug',)
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
