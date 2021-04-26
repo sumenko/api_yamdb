@@ -1,8 +1,6 @@
-from django.shortcuts import render
 from rest_framework.pagination import PageNumberPagination
 from .mixins import DestroyListCreateViewSet
 from .models import Category, Genre, Title
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
@@ -15,7 +13,6 @@ from .serializers import (CategorySerializer,
 
 
 class CategoryViewSet(DestroyListCreateViewSet):
-    '''апивью для категорий'''
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
