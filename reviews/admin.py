@@ -1,7 +1,7 @@
 from django.contrib import admin
 from import_export.admin import ImportMixin
 
-from api.models import Category, Genre, Title
+from titles.models import Category, Genre, Title
 
 from .models import Comment, Review
 from .resources import (
@@ -11,17 +11,20 @@ from .resources import (
 
 
 class ReviewAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'author', 'text', 'score', 'pub_date')
+    list_display = ('id', 'author', 'text', 'score', 'pub_date', 'title_name')
     resource_class = ReviewResource
-    # def title_name(self, obj):
-    #     return "{} ({})".format(obj.title_id.name, obj.title_id.id)
+
+    def title_name(self, obj):
+        return "{}({})".format(obj.title.name, obj.title.id)
 
 
 class CommentAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'review_id_id', 'author', 'text', 'pub_date')
+    list_display = ('id', 'review_id', 'author', 'text', 'pub_date',
+                    'review_short')
     resource_class = CommentResource
-    # def title_name(self, obj):
-    #     return "{} ({})".format(obj.title_id.name, obj.title_id.id)
+
+    def review_short(self, obj):
+        return "{}({})".format(obj.review.text[:20], obj.review.id)
 
 
 class CategoryAdmin(ImportMixin, admin.ModelAdmin):
