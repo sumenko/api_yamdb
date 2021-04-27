@@ -1,12 +1,9 @@
 from import_export import resources
 
-from api.models import Category, Genre, Title
 from reviews.models import Comment, Review
+from titles.models import Category, Genre, Title
 
 
-# FIXME
-# Exception Value:
-# 'Review' object has no attribute 'get_user_visible_fields'
 class TitleResource(resources.ModelResource):
     class Meta:
         model = Title

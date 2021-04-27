@@ -1,55 +1,64 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Avg
 
-from api.models import Title
+from titles.models import Title
+from titles.validators import score_validator
 
 User = get_user_model()
 
 
 class Review(models.Model):
+    score = models.PositiveSmallIntegerField(
+        'Оценка',
+        choices=[(r, r) for r in range(1, 11)],
+        validators=[score_validator],
+    )
+    text = models.TextField('Текст', blank=True, null=True)
+    pub_date = models.DateTimeField(
+        'Дата отзыва',
+        auto_now_add=True,
+        db_index=True,
+    )
+    author = models.ForeignKey(
+        User,
+        verbose_name='Автор',
+        on_delete=models.CASCADE,
+    )
     title = models.ForeignKey(
         Title,
-        verbose_name='Объект',
-        on_delete=models.CASCADE,
         related_name='reviews',
+        verbose_name='Произведение',
+        on_delete=models.CASCADE,
         blank=False,
-        null=True,
-        db_index=False,
+        null=False
     )
-    author = models.ForeignKey(User,
-                               verbose_name='Автор отзыва',
-                               on_delete=models.CASCADE,
-                               related_name='authors',
-                               )
-    text = models.TextField(verbose_name='Текст отзыва', blank=False)
-    score = models.IntegerField(verbose_name='Оценка',
-                                validators=[MinValueValidator(1),
-                                            MaxValueValidator(10)])
-    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
-
-    def __str__(self):
-        return self.text
 
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        ordering = ('-pub_date',)
 
-        ordering = ['-pub_date']
-        constraints = [
-            models.UniqueConstraint(fields=['author', 'title'],
-                                    name='author-title-constraint')
-        ]
+    def __str__(self):
+        return self.text
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.score_avg = Review.objects.filter(title_id=self.title).aggregate(
+            Avg('score')
+        )
+        self.title.rating = self.score_avg['score__avg']
+        self.title.save()
 
 
 class Comment(models.Model):
-    review_id = models.ForeignKey(
+    review = models.ForeignKey(
         Review,
         verbose_name='Отзыв',
         on_delete=models.CASCADE,
         related_name='comments',
         blank=False,
-        null=True,
+        null=False,
         db_index=False,
     )
     text = models.TextField(verbose_name='Текст комментария', blank=False)
@@ -59,3 +68,11 @@ class Comment(models.Model):
                                related_name='comments',
                                )
     pub_date = models.DateTimeField('Дата комментария', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ('-pub_date',)
+
+    def __str__(self):
+        return self.text

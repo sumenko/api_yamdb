@@ -1,13 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from api.validators import year_validator
-
-
-class Roles(models.TextChoices):
-    USER = 'user', 'Пользователь'
-    MODERATOR = 'moderator', 'Модератор'
-    ADMIN = 'admin', 'Администратор'
+from titles.validators import year_validator
 
 
 class Category(models.Model):

@@ -26,7 +26,6 @@ class OneUserViewSet(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
 
     def get_object(self):
-        print(self.request.user)
         return get_object_or_404(User, username=self.request.user)
 
     def put(self, request, *args, **kwargs):
