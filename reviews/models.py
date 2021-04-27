@@ -67,3 +67,11 @@ class Comment(models.Model):
                                related_name='comments',
                                )
     pub_date = models.DateTimeField('Дата комментария', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ('-pub_date',)
+
+    def __str__(self):
+        return self.text
