@@ -22,7 +22,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'auth_app',
-    'api.apps.ApiConfig',
+    'titles',
     'reviews',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from api.validators import year_validator
+from titles.validators import year_validator
 
 
 class Category(models.Model):
