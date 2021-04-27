@@ -1,14 +1,12 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import (
-    AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
-)
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Title
+from api.permissions import ReviewCommentPermissions
 
 from .models import Review
 from .serializers import CommentSerializer, ReviewSerializer
-from api.permissions import ReviewCommentPermissions
 
 
 class ReviewViewSet(ModelViewSet):
@@ -29,7 +27,6 @@ class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly,
                           ReviewCommentPermissions]
-    #permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))

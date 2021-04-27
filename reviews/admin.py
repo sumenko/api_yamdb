@@ -18,7 +18,7 @@ class ReviewAdmin(ImportMixin, admin.ModelAdmin):
 
 
 class CommentAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'review_id_id', 'author', 'text', 'pub_date')
+    list_display = ('id', 'review_id', 'author', 'text', 'pub_date')
     resource_class = CommentResource
     # def title_name(self, obj):
     #     return "{} ({})".format(obj.title_id.name, obj.title_id.id)

@@ -4,12 +4,6 @@ from django.db import models
 from api.validators import year_validator
 
 
-class Roles(models.TextChoices):
-    USER = 'user', 'Пользователь'
-    MODERATOR = 'moderator', 'Модератор'
-    ADMIN = 'admin', 'Администратор'
-
-
 class Category(models.Model):
     name = models.CharField('Название', max_length=200)
     slug = models.SlugField('Короткая ссылка', unique=True, db_index=True)

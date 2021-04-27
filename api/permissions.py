@@ -1,7 +1,6 @@
 from rest_framework import permissions
 
 from auth_app.models import User
-from .models import Roles
 
 MODERATOR_METHODS = ('PATCH', 'DELETE')
 
@@ -28,8 +27,8 @@ class ReviewCommentPermissions(permissions.BasePermission):
         if request.method in MODERATOR_METHODS:
             return (
                 request.user == obj.author
-                or request.user.role == Roles.ADMIN
-                or request.user.role == Roles.MODERATOR
+                or request.user.role == User.Roles.ADMIN
+                or request.user.role == User.Roles.MODERATOR
             )
 
         return request.method in permissions.SAFE_METHODS

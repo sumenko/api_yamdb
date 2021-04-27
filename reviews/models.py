@@ -31,6 +31,8 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='Произведение',
         on_delete=models.CASCADE,
+        blank=False,
+        null=False
     )
 
     class Meta:
@@ -51,13 +53,13 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    review_id = models.ForeignKey(
+    review = models.ForeignKey(
         Review,
         verbose_name='Отзыв',
         on_delete=models.CASCADE,
         related_name='comments',
         blank=False,
-        null=True,
+        null=False,
         db_index=False,
     )
     text = models.TextField(verbose_name='Текст комментария', blank=False)
