@@ -4,13 +4,13 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/auth/', include('auth_app.urls')),
+    path('api/', include('auth_app.urls')),
     path('api/v1/users/', include('users.urls')),
-    path('api/v1/', include('reviews.urls')),
+    path('api/', include('reviews.urls')),
+    path('api/', include('titles.urls')),
     path(
         'redoc/',
         TemplateView.as_view(template_name='redoc.html'),
         name='redoc'
     ),
-    path('api/', include('titles.urls')),
 ]
