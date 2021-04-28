@@ -2,11 +2,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import BaseUserManager
 from django.core.mail import send_mail
 from django.core.mail.message import BadHeaderError
+# FIXME
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
 User = get_user_model()
 
@@ -16,16 +19,18 @@ User = get_user_model()
 def get_confirmation_code(request):
     """ POST Отправляет код подтверждения на почту в параметре email """
     user_mail = BaseUserManager.normalize_email(request.POST.get('email'))
+    username = request.POST.get('username')
     confirmation_code = User.objects.make_random_password()
-
-    user = get_object_or_404(User, email=user_mail)
+    # FIXME Помимо почты стоит запрашивать юзернейм. Т.к. дальше он много
+    # где встречается
+    user, _ = User.objects.get_or_create(username=username, email=user_mail)
     user.confirmation_code = confirmation_code
     user.save()
     try:
         send_mail('Getting access',
                   (f'Dear user!\nTo get access YaMDB use this '
                    f'confirmation code: {confirmation_code}'),
-                  None, [user_mail, ])
+                  DEFAULT_FROM_EMAIL, [user_mail, ])
         return Response(status=status.HTTP_200_OK)
     except BadHeaderError:
         return Response({'errors': 'incorrect e-mail {}'.format(user_mail)},
@@ -37,6 +42,8 @@ def get_confirmation_code(request):
 def get_token(request):
     """ Получение токена по связке email+confirmation_code """
     email = request.POST.get('email')
+    # FIXME Чтобы не писать условия и не проверять вручную можно же 
+    # сделать сериалайзер и здесь его использовать. Код заметно сократится
     if not email:
         return Response({'error': 'email required'},
                         status=status.HTTP_400_BAD_REQUEST)

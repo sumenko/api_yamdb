@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
-from django.core.validators import MaxValueValidator, MinValueValidator
 
 from titles.models import Title
 
@@ -49,6 +49,8 @@ class Review(models.Model):
         self.score_avg = Review.objects.filter(title_id=self.title).aggregate(
             Avg('score')
         )
+        # FIXME см. titles.py/views.py
+        # подсчет через аннотации
         self.title.rating = self.score_avg['score__avg']
         self.title.save()
 

@@ -1,6 +1,9 @@
+from django.db.models.aggregates import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.pagination import PageNumberPagination
+
+from reviews.models import Review
 
 from .filters import TitleFilter
 from .mixins import DestroyListCreateViewSet
@@ -42,3 +45,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return TitleListSerializer
         return TitlePostSerializer
+    # FIXME подсчет через аннотацию
+    # https://stackoverflow.com/questions/31920853/aggregate-and-other-annotated-fields-in-django-rest-framework-serializers
+    # def get_queryset(self):
+    #     return Review.objects.annotate(total_rating=Avg(''))
