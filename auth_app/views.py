@@ -11,8 +11,21 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
+from .serializer import UserSerializer
+
 User = get_user_model()
 
+# @api_view(['POST'])
+# @permission_classes([permissions.AllowAny, ])
+# def get_code(request):
+#     user_serializer = UserSerializer(data=request.data)
+#     # user_mail = BaseUserManager.normalize_email(request.POST.get('email'))
+#     # username = request.POST.get('username')
+#     # confirmation_code = User.objects.make_random_password()
+#     # user, _ = User.objects.get_or_create(username=username, email=user_mail)
+#     if user_serializer.is_valid(raise_exception=True):
+
+#     re/turn Response(user_serializer.data, status=status.HTTP_418_IM_A_TEAPOT)
 
 @api_view(['POST', ])
 @permission_classes([permissions.AllowAny, ])
@@ -21,8 +34,6 @@ def get_confirmation_code(request):
     user_mail = BaseUserManager.normalize_email(request.POST.get('email'))
     username = request.POST.get('username')
     confirmation_code = User.objects.make_random_password()
-    # FIXME Помимо почты стоит запрашивать юзернейм. Т.к. дальше он много
-    # где встречается
     user, _ = User.objects.get_or_create(username=username, email=user_mail)
     user.confirmation_code = confirmation_code
     user.save()
@@ -41,6 +52,12 @@ def get_confirmation_code(request):
 @permission_classes([permissions.AllowAny, ])
 def get_token(request):
     """ Получение токена по связке email+confirmation_code """
+    user = UserSerializer(data=request.data)
+    if user.is_valid():
+        print(user.data)
+        return Response(user.data, status=status.HTTP_418_IM_A_TEAPOT)
+    return Response(user.errors)
+
     email = request.POST.get('email')
     # FIXME Чтобы не писать условия и не проверять вручную можно же 
     # сделать сериалайзер и здесь его использовать. Код заметно сократится
