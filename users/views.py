@@ -27,7 +27,9 @@ class UsersViewset(ModelViewSet):
         if request.method == 'GET':
             serializer = self.get_serializer(user)
         else:
-            serializer = self.get_serializer(user, data=request.data, partial=True)
+            serializer = self.get_serializer(user,
+                                             data=request.data,
+                                             partial=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)

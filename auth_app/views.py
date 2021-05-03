@@ -14,6 +14,7 @@ from .serializer import UserAuthSerializer
 
 User = get_user_model()
 
+
 @api_view(['POST', ])
 @permission_classes([permissions.AllowAny, ])
 def get_confirmation_code(request):

@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg
 
 from titles.models import Title
 
@@ -13,9 +12,7 @@ class Review(models.Model):
         'Оценка',
         validators=[
             MinValueValidator(1, 'Оценка не может быть меньше 1'),
-            MaxValueValidator(10, 'Оценка не может быть выше 10')
-            ],
-    )
+            MaxValueValidator(10, 'Оценка не может быть выше 10')],)
     text = models.TextField('Текст', blank=True, null=True)
     pub_date = models.DateTimeField(
         'Дата отзыва',
@@ -43,16 +40,6 @@ class Review(models.Model):
 
     def __str__(self):
         return self.text
-
-    #def save(self, *args, **kwargs):
-        #super().save(*args, **kwargs)
-        #self.score_avg = Review.objects.filter(title_id=self.title).aggregate(
-        #    Avg('score')
-        #)
-        # FIXME см. titles.py/views.py
-        # подсчет через аннотации
-        #self.title.rating = self.score_avg['score__avg']
-        #self.title.save()
 
 
 class Comment(models.Model):

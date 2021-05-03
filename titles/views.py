@@ -4,8 +4,6 @@ from rest_framework import filters, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from reviews.models import Review
-
 from .filters import TitleFilter
 from .mixins import DestroyListCreateViewSet
 from .models import Category, Genre, Title
@@ -47,17 +45,9 @@ class TitleViewSet(viewsets.ModelViewSet):
             return TitleListSerializer
         return TitlePostSerializer
 
-    #def get_queryset(self):
-     #   queryset = Title.objects.annotate(rating=Avg('reviews__score'))
-      #  return queryset
-
     def retrieve(self, request, *args, **kwargs):
         title = self.get_object()
-        title.rating = title.reviews.all().aggregate(Avg('score'))['score__avg']
+        title.rating = (title.reviews.all().aggregate(Avg('score'))
+                        ['score__avg'])
         serializer = self.get_serializer(title)
         return Response(serializer.data)
-
-    # FIXME подсчет через аннотацию
-    # https://stackoverflow.com/questions/31920853/aggregate-and-other-annotated-fields-in-django-rest-framework-serializers
-    # def get_queryset(self):
-    #     return Review.objects.annotate(total_rating=Avg(''))
