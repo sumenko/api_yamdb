@@ -1,7 +1,5 @@
 from rest_framework import permissions
 
-from auth_app.models import User
-
 MODERATOR_METHODS = ('PATCH', 'DELETE')
 
 

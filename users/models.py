@@ -28,9 +28,3 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('id',)
-
-
-# class ConfirmationCode(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     confirmation_code = models.CharField(verbose_name='Код подтверждения',
-#                                          null=True, default='', max_length=100)

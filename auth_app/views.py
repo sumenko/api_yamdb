@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import BaseUserManager
 from django.core.mail import send_mail
 from django.core.mail.message import BadHeaderError
-# FIXME
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
@@ -11,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
-from .serializer import UserSerializer
+from .serializer import UserAuthSerializer
 
 User = get_user_model()
 
@@ -40,7 +39,7 @@ def get_confirmation_code(request):
 @permission_classes([permissions.AllowAny, ])
 def get_token(request):
     """ Получение токена по связке email+confirmation_code """
-    UserSerializer(data=request.data).is_valid(raise_exception=True)
+    UserAuthSerializer(data=request.data).is_valid(raise_exception=True)
     user = get_object_or_404(User, email=request.data['email'],
                              username=request.data['username'])
 
