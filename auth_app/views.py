@@ -41,7 +41,8 @@ def get_confirmation_code(request):
 @permission_classes([permissions.AllowAny, ])
 def get_token(request):
     """ Получение токена по связке email+confirmation_code """
-    UserConfirmationSerializer(data=request.data).is_valid(raise_exception=True)
+    UserConfirmationSerializer(data=request.data).is_valid(
+        raise_exception=True)
     user = get_object_or_404(User, email=request.data['email'],
                              username=request.data['username'])
 
