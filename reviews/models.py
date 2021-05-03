@@ -44,15 +44,15 @@ class Review(models.Model):
     def __str__(self):
         return self.text
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.score_avg = Review.objects.filter(title_id=self.title).aggregate(
-            Avg('score')
-        )
+    #def save(self, *args, **kwargs):
+        #super().save(*args, **kwargs)
+        #self.score_avg = Review.objects.filter(title_id=self.title).aggregate(
+        #    Avg('score')
+        #)
         # FIXME см. titles.py/views.py
         # подсчет через аннотации
-        self.title.rating = self.score_avg['score__avg']
-        self.title.save()
+        #self.title.rating = self.score_avg['score__avg']
+        #self.title.save()
 
 
 class Comment(models.Model):
