@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
-from .serializer import UserAuthSerializer
+from .serializer import UserAuthSerializer, UserConfirmationSerializer
 
 User = get_user_model()
 
@@ -19,6 +19,7 @@ User = get_user_model()
 @permission_classes([permissions.AllowAny, ])
 def get_confirmation_code(request):
     """ POST Отправляет код подтверждения на почту в параметре email """
+    UserAuthSerializer(data=request.data).is_valid(raise_exception=True)
     user_mail = BaseUserManager.normalize_email(request.POST.get('email'))
     username = request.POST.get('username')
     confirmation_code = User.objects.make_random_password()
@@ -40,7 +41,7 @@ def get_confirmation_code(request):
 @permission_classes([permissions.AllowAny, ])
 def get_token(request):
     """ Получение токена по связке email+confirmation_code """
-    UserAuthSerializer(data=request.data).is_valid(raise_exception=True)
+    UserConfirmationSerializer(data=request.data).is_valid(raise_exception=True)
     user = get_object_or_404(User, email=request.data['email'],
                              username=request.data['username'])
 
