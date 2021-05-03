@@ -6,19 +6,10 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.ReadOnlyField()
-    email = serializers.ReadOnlyField()
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    confirmation_code = serializers.CharField(max_length=100)
 
     class Meta:
         model = User
-        fields = ['username', 'email']
-        # FIXME
-        # validators = [
-        #     serializers.UniqueTogetherValidator(
-        #         queryset=User.objects.all(),
-        #         fields=['email', 'username'],
-        #         message='Сочетание email-username уже занято')]
-    def validate(self, data):
-        print('code_validation')
-        print(data['username'])
-        return data
+        fields = ['confirmation_code', 'email', 'username']
