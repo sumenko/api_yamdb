@@ -34,6 +34,7 @@ class TitlePostSerializer(serializers.ModelSerializer):
 class TitleListSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
+    rating = serializers.FloatField(read_only=True)
 
     class Meta:
         fields = '__all__'
