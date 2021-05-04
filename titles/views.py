@@ -2,7 +2,6 @@ from django.db.models.aggregates import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 
 from .filters import TitleFilter
 from .mixins import DestroyListCreateViewSet

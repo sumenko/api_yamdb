@@ -50,7 +50,8 @@ def get_token(request):
         return Response({'errors': 'confirmation_code expired'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    if user.confirmation_code == user_serializer.data['confirmation_code']:
+    if user.confirmation_code == (
+            user_serializer.validated_data['confirmation_code']):
         refresh = RefreshToken.for_user(user)
         user.confirmation_code = ''
         user.save()

@@ -38,7 +38,7 @@ class GenreAdmin(ImportMixin, admin.ModelAdmin):
 
 
 class TitleAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'name', 'year', 'rating', 'category_name',
+    list_display = ('id', 'name', 'year', 'category_name',
                     'genre_name')
     resource_class = TitleResource
 
