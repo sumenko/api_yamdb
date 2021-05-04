@@ -36,15 +36,6 @@ class Title(models.Model):
         'Год создания',
         validators=[year_validator],
     )
-    rating = models.SmallIntegerField(
-        'Рейтинг',
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(10),
-        ],
-        blank=True,
-        null=True,
-    )
     description = models.TextField('Описание', blank=True, null=True)
     category = models.ForeignKey(
         Category,

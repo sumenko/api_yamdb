@@ -35,7 +35,8 @@ class GenreViewSet(DestroyListCreateViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')).order_by('rating')
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -44,10 +45,3 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return TitleListSerializer
         return TitlePostSerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        title = self.get_object()
-        title.rating = (title.reviews.all().aggregate(Avg('score'))
-                        ['score__avg'])
-        serializer = self.get_serializer(title)
-        return Response(serializer.data)
