@@ -15,7 +15,9 @@ class UserAuthSerializer(serializers.ModelSerializer):
 
 
 class UserConfirmationSerializer(UserAuthSerializer):
-    confirmation_code = serializers.CharField(max_length=100)
+    confirmation_code = serializers.CharField(max_length=100,
+                                              allow_blank=False,
+                                              required=True)
 
     class Meta:
         model = User

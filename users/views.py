@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import filters, status
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -23,7 +24,8 @@ class UsersViewset(ModelViewSet):
     @action(detail=False, methods=['get', 'patch'],
             permission_classes=[IsAuthenticated])
     def me(self, request, pk=None):
-        user = User.objects.get(username=request.user)
+        user = get_object_or_404(User, username=request.user.username)
+
         if request.method == 'GET':
             serializer = self.get_serializer(user)
         else:
@@ -31,5 +33,5 @@ class UsersViewset(ModelViewSet):
                                              data=request.data,
                                              partial=True)
             serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
+            serializer.save(role=user.role, partial=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
