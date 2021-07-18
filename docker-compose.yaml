@@ -4,7 +4,7 @@ services:
     db:
         image: postgres:12.4
         volumes:
-            - postgres_data:/var/lib/postgresql/postgres_data
+            - postgres_data:/var/lib/postgresql/postgres_data/
         env_file:
             - ./.env
 
@@ -21,6 +21,7 @@ services:
             - db
         env_file:
             - ./.env
+
     nginx:
         image: nginx:1.19.3
         ports:

@@ -1,7 +1,6 @@
 FROM python:3.8.5
-LABEL name='yamdb'
 RUN mkdir /code
-COPY ./requirements.txt /code
+COPY requirements.txt /code
 RUN pip3 install -r /code/requirements.txt
 COPY . /code
 WORKDIR /code
