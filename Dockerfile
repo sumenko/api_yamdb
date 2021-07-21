@@ -1,4 +1,4 @@
-FROM python:3.8.5
+FROM python:3.8.5-slim
 RUN mkdir /code
 COPY requirements.txt /code
 RUN pip3 install -r /code/requirements.txt
